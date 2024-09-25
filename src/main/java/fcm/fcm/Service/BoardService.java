@@ -2,6 +2,7 @@ package fcm.fcm.Service;
 
 import fcm.fcm.Entity.BoardEntity;
 import fcm.fcm.Entity.UserEntity;
+import fcm.fcm.Entity.grade.BoardGrade;
 import fcm.fcm.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,23 @@ public class BoardService {
 
     public List<BoardEntity> findByAll(String boardName) {
         return boardRepository.findAll();
+    }
+
+    public List<BoardEntity> getAllPosts() {
+        return boardRepository.findAll();
+    }
+
+    public BoardEntity createPost(BoardEntity post) {
+        return boardRepository.save(post);
+    }
+
+    // ID로 게시글 조회 메서드
+    public Optional<BoardEntity> getPostById(Long id) {
+        return boardRepository.findById(id);
+    }
+
+    public List<BoardEntity> getCommunityPosts() {
+        return boardRepository.findByBoardGrade(BoardGrade.community);
     }
 }
 
