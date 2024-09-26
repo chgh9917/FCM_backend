@@ -8,6 +8,7 @@ import fcm.fcm.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -31,7 +32,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 정보가 잘못되었습니다.");
         }
 
-        if (user.getPassword().equals(request.getPassword()) && user.getEmail().equals(request.getEmail())) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못 되었습니다.");
@@ -48,6 +50,9 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody UserEntity user) {
         // 사용자 기본 등급과 생성 및 업데이트 시간을 설정
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
         user.setUserGrade(UserGrade.USER);
         user.setCreateAt(LocalDateTime.now());
         user.setUpdateAt(LocalDateTime.now());

@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,9 +61,9 @@ public class BoardController {
     // 새로운 게시글 작성 엔드포인트
     @PostMapping("/api/posts/create")
     public ResponseEntity<BoardEntity> createPost(@RequestBody BoardEntity post) {
-        BoardEntity newPost = boardService.createPost(post);
-        newPost.setCreateAt(LocalDate.now().atStartOfDay());
-        newPost.setUpdateAt(LocalDate.now().atStartOfDay());
+        BoardEntity newPost = new BoardEntity(post);
+        boardService.createPost(newPost);
+
         return ResponseEntity.ok(newPost);
     }
 

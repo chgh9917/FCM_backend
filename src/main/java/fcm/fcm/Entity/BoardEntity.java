@@ -31,4 +31,18 @@ public class BoardEntity {
 
     @Column(name = "UPDATE_AT")
     private LocalDateTime updateAt;
+
+    public BoardEntity(BoardEntity post) {
+        this.boardGrade = post.getBoardGrade();
+        this.writer = post.getWriter();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+
+        this.createAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    public BoardEntity() {
+
+    }
 }
