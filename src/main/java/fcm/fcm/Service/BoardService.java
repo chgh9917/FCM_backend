@@ -25,8 +25,8 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    public List<BoardEntity> findByAll(String boardName) {
-        return boardRepository.findAll();
+    public List<BoardEntity> findByAll(BoardGrade grade) {
+        return boardRepository.findByBoardGrade(grade);
     }
 
     public List<BoardEntity> getAllPosts() {

@@ -40,13 +40,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        // 세션 제거 코드 아마 사용할일 없을듯 -> 세션 관련은 프론트에서 하는게 편함
-        session.removeAttribute("user");
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody UserEntity user) {
         // 사용자 기본 등급과 생성 및 업데이트 시간을 설정

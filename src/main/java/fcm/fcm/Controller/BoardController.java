@@ -1,9 +1,11 @@
 package fcm.fcm.Controller;
 
 import fcm.fcm.Entity.BoardEntity;
+import fcm.fcm.Entity.grade.BoardGrade;
 import fcm.fcm.Service.BoardService;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,41 +29,23 @@ public class BoardController {
 
     @GetMapping("/ai/generate")
     public Map<String,String> generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) {
-        return Map.of("generation", chatModel.call("한국어로 해줘"+message));
+        return Map.of("generation", chatModel.call("한국어로 해줘 "+message));
     }
 
-    @PostMapping("/board/{id}")
-    public Optional<BoardEntity> board(@PathVariable Long id) {
-        return boardService.findById(id);
-    }
-
-    @PostMapping("/board/{boardname}")
-    public void board(@PathVariable String boardname, @RequestBody BoardEntity boardEntity) {
-        BoardEntity entity = new BoardEntity();
-
-        entity.setTitle(boardEntity.getTitle());
-        entity.setContent(boardEntity.getContent());
-    }
-
-    @PostMapping("/board")
-    public List<BoardEntity> board(@RequestBody String boardName) {
-        return boardService.findByAll(boardName);
-    }
-
-    @GetMapping("/api/posts")
-    public List<BoardEntity> getAllPosts() {
-        return boardService.getAllPosts();
-    }
-
-    @GetMapping("/api/posts/community")
-    public List<BoardEntity> getCommunityPosts() {
-        return boardService.getCommunityPosts();
+    @PostMapping("/api/posts")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<BoardEntity> board(@RequestBody BoardEntity grade) {
+        BoardEntity gradeEntity = new BoardEntity();
+        gradeEntity.setBoardGrade(grade.getBoardGrade());
+        return boardService.findByAll(gradeEntity.getBoardGrade());
     }
 
     // 새로운 게시글 작성 엔드포인트
     @PostMapping("/api/posts/create")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BoardEntity> createPost(@RequestBody BoardEntity post) {
         BoardEntity newPost = new BoardEntity(post);
+        newPost.setBoardGrade(newPost.getBoardGrade());
         boardService.createPost(newPost);
 
         return ResponseEntity.ok(newPost);
