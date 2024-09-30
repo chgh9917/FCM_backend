@@ -2,6 +2,7 @@ package fcm.fcm.Entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,13 @@ public class CalendarEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDateTime date;
+
+    @Column(nullable = false)
+    private String title; // 제목 필드 추가
+
+    @Column(nullable = false)
+    private String description; // 설명 필드 추가
 
     // 이미지 경로들을 리스트로 저장
     @ElementCollection
@@ -22,14 +29,17 @@ public class CalendarEntity {
     @Column(name = "image_path")
     private List<String> imagePaths = new ArrayList<>();
 
-    // 생성자, getter, setter
-    public CalendarEntity() {
-    }
+    // 기본 생성자
+    public CalendarEntity() {}
 
-    public CalendarEntity(LocalDate date) {
+    // 필요한 생성자
+    public CalendarEntity(LocalDateTime date, String title, String description) {
         this.date = date;
+        this.title = title;
+        this.description = description;
     }
 
+    // Getter, Setter
     public Long getId() {
         return id;
     }
@@ -38,12 +48,28 @@ public class CalendarEntity {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public List<String> getImagePaths() {

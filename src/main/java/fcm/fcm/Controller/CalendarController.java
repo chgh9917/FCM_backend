@@ -12,46 +12,59 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/calendar")
+@CrossOrigin(origins = "http://127.0.0.1:5173")
 public class CalendarController {
 
     @Autowired
     private CalendarService calendarService;
 
-    // 이미지 업로드 및 날짜에 대한 이벤트 저장 API
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadImages(@RequestParam("date") String date,
-                                               @RequestParam("files") List<MultipartFile> files) {
-        LocalDate eventDate = LocalDate.parse(date); // 문자열을 LocalDate로 변환
+    @PostMapping("/calendar/upload")
+    public ResponseEntity<Map<String, String>> uploadImages(@RequestParam(value = "files", required = false) List<MultipartFile> files,
+                                                            @RequestParam("title") String title,
+                                                            @RequestParam("description") String description) {
+        LocalDateTime eventDate = LocalDateTime.now();
         List<String> imagePaths = new ArrayList<>();
 
-        // 파일 저장 로직
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                try {
-                    String fileName = file.getOriginalFilename();
-                    Path path = Paths.get("uploads/" + fileName); // 파일 저장 경로 설정
-                    Files.write(path, file.getBytes()); // 파일 저장
+        Path uploadDir = Paths.get("uploads");
 
-                    imagePaths.add(path.toString()); // 저장된 파일 경로를 리스트에 추가
-                } catch (IOException e) {
-                    return ResponseEntity.status(500).body("파일 저장 실패");
+        if (!Files.exists(uploadDir)) {
+            try {
+                Files.createDirectories(uploadDir);
+            } catch (IOException e) {
+                return ResponseEntity.status(500).body(Map.of("message", "디렉터리 생성 실패"));
+            }
+        }
+
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    try {
+                        String fileName = file.getOriginalFilename();
+                        Path path = uploadDir.resolve(fileName);
+                        Files.write(path, file.getBytes());
+                        imagePaths.add(path.toString());
+                    } catch (IOException e) {
+                        return ResponseEntity.status(500).body(Map.of("message", "파일 저장 실패"));
+                    }
                 }
             }
         }
 
-        // 데이터베이스에 날짜 및 이미지 경로 저장
-        calendarService.saveCalendarEvent(eventDate, imagePaths);
+        calendarService.saveCalendarEventWithDetails(eventDate, imagePaths, title, description);
 
-        return ResponseEntity.ok("파일 업로드 및 이벤트 저장 성공");
+        // 성공 메시지를 JSON으로 반환
+        return ResponseEntity.ok(Map.of("message", "파일 업로드 및 이벤트 저장 성공"));
     }
 
+
     // 특정 날짜의 이벤트를 가져오는 API
-    @GetMapping("/events")
+    @GetMapping("/calendar/events")
     public ResponseEntity<List<CalendarEntity>> getEvents(@RequestParam("date") String date) {
         LocalDate eventDate = LocalDate.parse(date);
         List<CalendarEntity> events = calendarService.getEventsByDate(eventDate);
@@ -59,7 +72,7 @@ public class CalendarController {
     }
 
     // 모든 이벤트 가져오는 API
-    @GetMapping("/all-events")
+    @GetMapping("/calendar/all-events")
     public ResponseEntity<List<CalendarEntity>> getAllEvents() {
         List<CalendarEntity> events = calendarService.getAllEvents();
         return ResponseEntity.ok(events);

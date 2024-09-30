@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,12 +15,16 @@ public class CalendarService {
     @Autowired
     private CalendarRepository calendarRepository;
 
-    // 새 날짜와 이미지를 저장하는 메서드
-    public CalendarEntity saveCalendarEvent(LocalDate date, List<String> imagePaths) {
-        CalendarEntity calendarEntity = new CalendarEntity(date);
-        calendarEntity.setImagePaths(imagePaths); // 이미지 경로 추가
-        return calendarRepository.save(calendarEntity); // 저장
+
+    public void saveCalendarEventWithDetails(LocalDateTime eventDate, List<String> imagePaths, String title, String description) {
+        // CalendarEntity에 이벤트 날짜, 이미지 경로, 제목, 설명 저장
+        CalendarEntity event = new CalendarEntity(eventDate, title, description);
+        event.setImagePaths(imagePaths); // 이미지 경로 설정
+
+        // 저장 로직 (Repository를 사용하여 DB에 저장)
+        calendarRepository.save(event);
     }
+
 
     // 특정 날짜의 이벤트를 불러오는 메서드
     public List<CalendarEntity> getEventsByDate(LocalDate date) {

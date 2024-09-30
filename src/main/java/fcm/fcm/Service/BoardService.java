@@ -45,5 +45,9 @@ public class BoardService {
     public List<BoardEntity> getCommunityPosts() {
         return boardRepository.findByBoardGrade(BoardGrade.community);
     }
+
+    public List<BoardEntity> findByBoardGrade(String boardGrade) {
+        return boardRepository.findByBoardGrade(BoardGrade.valueOf(boardGrade));
+    }
 }
 

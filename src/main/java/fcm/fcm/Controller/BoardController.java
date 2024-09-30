@@ -34,10 +34,8 @@ public class BoardController {
 
     @PostMapping("/api/posts")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<BoardEntity> board(@RequestBody BoardEntity grade) {
-        BoardEntity gradeEntity = new BoardEntity();
-        gradeEntity.setBoardGrade(grade.getBoardGrade());
-        return boardService.findByAll(gradeEntity.getBoardGrade());
+    public List<BoardEntity> board(@RequestParam String boardGrade) {
+        return boardService.findByBoardGrade(boardGrade);
     }
 
     // 새로운 게시글 작성 엔드포인트
