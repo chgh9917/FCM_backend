@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5173")
 public class UserController {
 
     private final UserService userService;
@@ -23,6 +22,17 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptions() {
+        return ResponseEntity
+                .ok()
+                .header("Access-Control-Allow-Origin", "http://127.0.0.1:5173")
+                .header("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE")
+                .header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+                .build();
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
