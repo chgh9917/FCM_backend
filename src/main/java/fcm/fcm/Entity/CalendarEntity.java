@@ -23,6 +23,8 @@ public class CalendarEntity {
     @Column(nullable = false)
     private String description; // 설명 필드 추가
 
+    private String email;
+
     // 이미지 경로들을 리스트로 저장
     @ElementCollection
     @CollectionTable(name = "calendar_images", joinColumns = @JoinColumn(name = "calendar_id"))
@@ -46,6 +48,14 @@ public class CalendarEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public LocalDateTime getDate() {
