@@ -1,5 +1,6 @@
 package fcm.fcm.Controller;
 
+import fcm.fcm.Dto.BoardDTO;
 import fcm.fcm.Entity.BoardEntity;
 import fcm.fcm.Entity.grade.BoardGrade;
 import fcm.fcm.Service.BoardService;
@@ -9,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:5173")
@@ -37,6 +36,24 @@ public class BoardController {
     public List<BoardEntity> board(@RequestParam String boardGrade) {
         return boardService.findByBoardGrade(boardGrade);
     }
+    //커뮤니티 게시글 불러오기
+    @GetMapping("/api/posts/community")
+    public List<BoardDTO> getCommunityPosts() {
+        List<BoardEntity> list = boardService.getCommunityPosts();
+        List<BoardDTO> DTO_list = new ArrayList<>();
+        for (BoardEntity boardEntity : list) {
+            BoardDTO boardDTO = new BoardDTO();
+            boardDTO.setId(boardEntity.getId());
+            boardDTO.setTitle(boardEntity.getTitle());
+            boardDTO.setContent(boardEntity.getContent());
+            if (boardEntity.getBoardPassword() != null) {
+                boardDTO.setTitle("비밀글입니다.");
+            }
+            DTO_list.add(boardDTO);
+        }
+        return DTO_list;
+    }
+
 
     // 새로운 게시글 작성 엔드포인트
     @PostMapping("/api/posts/create")
@@ -49,9 +66,27 @@ public class BoardController {
         return ResponseEntity.ok(newPost);
     }
 
+    //비밀글 여부 확인
     @GetMapping("/api/posts/{id}")
     public ResponseEntity<BoardEntity> getPostById(@PathVariable Long id) {
+
         Optional<BoardEntity> post = boardService.getPostById(id);
-        return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(post.get().getBoardPassword()==null){
+            return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        }
+        else{
+            return post.map(p -> ResponseEntity.badRequest().body(p)).orElseGet(() -> ResponseEntity.badRequest().build());
+        }
+    }
+
+    //비밀글 암호 일치 확인
+    @PostMapping("/api/posts/{id}")
+    public ResponseEntity<BoardEntity> getPostById(@PathVariable Long id,@RequestBody String boardPassword) {
+
+        Optional<BoardEntity> post = boardService.getPostById(id);
+        if(Objects.equals(post.get().getBoardPassword(), boardPassword)){
+            return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        }
+        return post.map(p -> ResponseEntity.badRequest().body(p)).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

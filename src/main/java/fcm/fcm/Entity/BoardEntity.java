@@ -26,6 +26,9 @@ public class BoardEntity {
 
     private String content;
 
+    //비밀글 사용 암호: 작성 -> 비밀글 사용, NULL -> 비밀글 미사용
+    private String boardPassword;
+
     @Column(name = "CREATE_AT")
     private LocalDateTime createAt;
 
@@ -37,6 +40,7 @@ public class BoardEntity {
         this.writer = post.getWriter();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.boardPassword = post.getBoardPassword();
 
         this.createAt = LocalDateTime.now();
         this.updateAt = LocalDateTime.now();
