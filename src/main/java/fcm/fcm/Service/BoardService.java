@@ -49,5 +49,9 @@ public class BoardService {
     public List<BoardEntity> findByBoardGrade(String boardGrade) {
         return boardRepository.findByBoardGrade(BoardGrade.valueOf(boardGrade));
     }
+
+    public void deletePost(Long id) {
+        boardRepository.deleteById(id);
+    }
 }
 

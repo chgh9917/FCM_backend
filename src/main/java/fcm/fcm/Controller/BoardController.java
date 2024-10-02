@@ -2,7 +2,6 @@ package fcm.fcm.Controller;
 
 import fcm.fcm.Dto.BoardDTO;
 import fcm.fcm.Entity.BoardEntity;
-import fcm.fcm.Entity.grade.BoardGrade;
 import fcm.fcm.Service.BoardService;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +87,12 @@ public class BoardController {
             return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         }
         return post.map(p -> ResponseEntity.badRequest().body(p)).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/posts/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable Long id) {
+        boardService.deletePost(id);
+
+        return ResponseEntity.ok().build();
     }
 }

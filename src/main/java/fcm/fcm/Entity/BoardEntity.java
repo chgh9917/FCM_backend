@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "BOARD")
 @Getter @Setter
 public class BoardEntity {
 
