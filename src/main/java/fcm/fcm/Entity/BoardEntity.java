@@ -21,7 +21,7 @@ public class BoardEntity {
     @Column(name = "BOARD_GRADE")
     private BoardGrade boardGrade;
 
-    private String writer;
+    private Long userId;
 
     private String title;
 
@@ -38,7 +38,7 @@ public class BoardEntity {
 
     public BoardEntity(BoardEntity post) {
         this.boardGrade = post.getBoardGrade();
-        this.writer = post.getWriter();
+        this.userId = post.getUserId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.boardPassword = post.getBoardPassword();
