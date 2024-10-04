@@ -2,6 +2,8 @@ package fcm.fcm.Entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "FOOD")
 public class FoodEntity {
@@ -12,6 +14,12 @@ public class FoodEntity {
     private String foodName;
 
     private int foodKal;
+
+    private Long userId;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
 
     public FoodEntity() {}
 

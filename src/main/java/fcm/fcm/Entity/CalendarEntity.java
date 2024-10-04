@@ -31,6 +31,8 @@ public class CalendarEntity {
     @Column(name = "image_path")
     private List<String> imagePaths = new ArrayList<>();
 
+    private Long foodId;
+
     // 기본 생성자
     public CalendarEntity() {}
 
@@ -80,6 +82,14 @@ public class CalendarEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getFoodId() {
+        return foodId;
+    }
+
+    public void setFoodId(Long foodId) {
+        this.foodId = foodId;
     }
 
     public List<String> getImagePaths() {

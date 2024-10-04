@@ -70,10 +70,9 @@ public class BoardController {
     public ResponseEntity<BoardEntity> getPostById(@PathVariable Long id) {
 
         Optional<BoardEntity> post = boardService.getPostById(id);
-        if(post.get().getBoardPassword()==null){
+        if(post.get().getBoardPassword()==null) {
             return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-        }
-        else{
+        } else {
             return post.map(p -> ResponseEntity.badRequest().body(p)).orElseGet(() -> ResponseEntity.badRequest().build());
         }
     }
