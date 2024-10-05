@@ -16,9 +16,9 @@ public class CalendarService {
     private CalendarRepository calendarRepository;
 
 
-    public void saveCalendarEventWithDetails(LocalDateTime eventDate, List<String> imagePaths, String title, String description) {
+    public void saveCalendarEventWithDetails(LocalDateTime eventDate, List<String> imagePaths, String title, String description, String email, List<String> predictResults) {
         // CalendarEntity에 이벤트 날짜, 이미지 경로, 제목, 설명 저장
-        CalendarEntity event = new CalendarEntity(eventDate, title, description);
+        CalendarEntity event = new CalendarEntity(eventDate, title, description, email, predictResults);
         event.setImagePaths(imagePaths); // 이미지 경로 설정
 
         // 저장 로직 (Repository를 사용하여 DB에 저장)

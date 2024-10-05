@@ -44,6 +44,7 @@ public class UserController {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            // String sessionId = UUID.randomUUID().toString();
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못 되었습니다.");

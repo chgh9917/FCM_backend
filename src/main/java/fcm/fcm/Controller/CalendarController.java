@@ -31,13 +31,14 @@ public class CalendarController {
     @Autowired
     private CalendarService calendarService;
 
-
     @PostMapping("/calendar/upload")
-    public ResponseEntity<Map<String, String>> uploadImages(@RequestParam(value = "files", required = false) List<MultipartFile> files,
+    public ResponseEntity<Map<String, Object>> uploadImages(@RequestParam(value = "files", required = false) List<MultipartFile> files,
                                                             @RequestParam("title") String title,
-                                                            @RequestParam("description") String description) {
+                                                            @RequestParam("description") String description,
+                                                            @RequestParam("email") String email) {
         LocalDateTime eventDate = LocalDateTime.now();
         List<String> imagePaths = new ArrayList<>();
+        List<String> predictResults = new ArrayList<>();
 
         Path uploadDir = Paths.get("uploads");
 
@@ -57,6 +58,11 @@ public class CalendarController {
                         Path path = uploadDir.resolve(fileName);
                         Files.write(path, file.getBytes());
                         imagePaths.add(path.toString());
+
+                        // 예측 결과 받아오기
+                        String predictResult = sendImageToFlask(file);
+                        predictResults.add(predictResult);
+
                     } catch (IOException e) {
                         return ResponseEntity.status(500).body(Map.of("message", "파일 저장 실패"));
                     }
@@ -64,12 +70,15 @@ public class CalendarController {
             }
         }
 
-        calendarService.saveCalendarEventWithDetails(eventDate, imagePaths, title, description);
+        calendarService.saveCalendarEventWithDetails(eventDate, imagePaths, title, description, email, predictResults);
 
-        // 성공 메시지를 JSON으로 반환
-        return ResponseEntity.ok(Map.of("message", "파일 업로드 및 이벤트 저장 성공"));
+        Map<String, Object> response = Map.of(
+                "message", "파일 업로드 및 이벤트 저장 성공",
+                "predictResults", predictResults
+        );
+
+        return ResponseEntity.ok(response);
     }
-
 
     // 특정 날짜의 이벤트를 가져오는 API
     @GetMapping("/calendar/events")
@@ -86,8 +95,7 @@ public class CalendarController {
         return ResponseEntity.ok(events);
     }
 
-    @PostMapping("/predict")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+    private String sendImageToFlask(MultipartFile file) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "http://localhost:5000/predict";  // Flask 서버 URL
@@ -114,6 +122,6 @@ public class CalendarController {
         // Flask 서버로 POST 요청 전송
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
-        return ResponseEntity.ok(response.getBody());
+        return response.getBody();
     }
 }

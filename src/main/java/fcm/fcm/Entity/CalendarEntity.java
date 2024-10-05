@@ -1,6 +1,9 @@
 package fcm.fcm.Entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "CALENDAR")
+@Getter @Setter
 public class CalendarEntity {
 
     @Id
@@ -31,73 +35,29 @@ public class CalendarEntity {
     @Column(name = "image_path")
     private List<String> imagePaths = new ArrayList<>();
 
-    private Long foodId;
+    @ElementCollection
+    @Column(length = 5000)
+    private List<String> predictResults;
 
     // 기본 생성자
     public CalendarEntity() {}
 
     // 필요한 생성자
-    public CalendarEntity(LocalDateTime date, String title, String description) {
+    public CalendarEntity(LocalDateTime date, String title, String description, String email, List<String> predictResults) {
         this.date = date;
         this.title = title;
         this.description = description;
-    }
-
-    // Getter, Setter
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
+        this.predictResults = predictResults;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
+    public CalendarEntity(LocalDateTime date, String title, String description, List<String> imagePaths, String email, List<String> predictResults) {
+        this.date = LocalDateTime.now();
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getFoodId() {
-        return foodId;
-    }
-
-    public void setFoodId(Long foodId) {
-        this.foodId = foodId;
-    }
-
-    public List<String> getImagePaths() {
-        return imagePaths;
-    }
-
-    public void setImagePaths(List<String> imagePaths) {
         this.imagePaths = imagePaths;
+        this.email = email;
+        this.predictResults = predictResults;
     }
 
     // 이미지 경로 추가 메서드
