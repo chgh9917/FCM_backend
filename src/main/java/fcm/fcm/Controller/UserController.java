@@ -1,11 +1,12 @@
 package fcm.fcm.Controller;
 
 import fcm.fcm.Entity.LoginRequest;
+import fcm.fcm.Entity.SessionStoryge;
 import fcm.fcm.Entity.UserEntity;
 import fcm.fcm.Entity.grade.UserGrade;
 import fcm.fcm.Exception.UserAlreadyExistsException;
+import fcm.fcm.Service.SessionStorygeService;
 import fcm.fcm.Service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,14 +14,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final SessionStorygeService sessionStorygeService;
+
+
+    public UserController(UserService userService, SessionStorygeService sessionStorygeService) {
         this.userService = userService;
+        this.sessionStorygeService = sessionStorygeService;
     }
 
     @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
@@ -44,7 +50,8 @@ public class UserController {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            // String sessionId = UUID.randomUUID().toString();
+            sessionStorygeService.createSession();
+
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 잘못 되었습니다.");
